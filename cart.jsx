@@ -172,14 +172,29 @@ const Products = (props) => {
     return newTotal;
   };
   // TODO: implement the restockProducts function
-  const restockProducts = (url) => {
-    doFetch(url);
-    let newItems = data.map((item) => {
+    const restockProducts = (url) => {
+    let newStock = [];
+    let newData = data.map(item => {
       let { name, country, cost, instock } = item;
+      newStock.push(`${item.name}~${item.country}~${item.cost}`);
       return { name, country, cost, instock };
+    });
+    
+    let stocky = [];
+    let restockedItems = items.map(item => {
+      stocky.push(`${item.name}~${item.country}~${item.cost}`);
+      let restockItem = newData.filter(ndItem => {
+        return ndItem.name == item.name 
+            && ndItem.country == item.country
+            && ndItem.cost == item.cost
       });
-    setItems([...items, ...newItems]) 
-  };
+      if (restockItem.length > 0) item.instock += restockItem[0].instock;
+      return item;
+    });
+    let newItems = ndStrings.filter(item => !iStrings.includes(item));
+    let newStock = newData.filter(item => newItems.includes(`${item.name}~${item.country}~${item.cost}`))
+    console.log(`Rendering newData ${JSON.stringify(newData)}`);
+    setItems([...restockedItems, ...newStock])
     
 
   return (
